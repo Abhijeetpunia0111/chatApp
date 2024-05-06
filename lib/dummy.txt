@@ -1,0 +1,153 @@
+
+import 'package:chat_login/chatservices/chatservce.dart';
+import 'package:chat_login/components/chat_bubble.dart';
+
+import 'package:chat_login/components/my_textfield.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:encrypt/encrypt.dart' as enct;
+import 'dart:convert';
+
+class ChatPage extends StatefulWidget {
+  final String  receiveruserEmail;
+  final String  receiveruserUserId;
+  const ChatPage({super.key ,  required this.receiveruserEmail, required this.receiveruserUserId});
+  
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  final TextEditingController _messageContoller = TextEditingController();
+  final ChatServices _chatServices = ChatServices();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  void encrypt(){
+
+    final plainText = _messageContoller.text.toString().trim();
+   var dat = DateTime.now();
+    final key = enct.Key.fromUtf8('date:${dat.toString()}');
+    final iv = enct.IV.fromLength(16);
+
+    final encrypter = enct.Encrypter(enct.AES(key));
+
+    final encrypted = encrypter.encrypt(plainText, iv: iv);
+    final decrypted = encrypter.decrypt(encrypted, iv: iv);
+
+    print(decrypted); // Lorem ipsum dolor sit amet, consectetur adipiscing elit
+    print(encrypted.base64);
+  }
+  void sendMessage( ) async{
+    if (_messageContoller.text.isNotEmpty) {
+    //  print("hi ");
+      final plainText = '${_messageContoller.text.toString().trim()}';
+      // final key = enct.Key.fromUtf8('my 32 length key................');
+      // final iv = enct.IV.fromLength(16);
+      //
+      // final encrypter = enct.Encrypter(enct.AES(key));
+      //
+      // final encrypted = encrypter.encrypt(plainText, iv: iv);
+      // final decrypted = encrypter.decrypt(encrypted, iv: iv);
+      // // Encrypt the plain text
+      // print('Encrypted: ${encrypted.base64}');
+      // print('decrypted: ${decrypted}');
+      Codec<String, String> stringToBase64 = utf8.fuse(base64);
+      String encoded = stringToBase64.encode(_messageContoller.text.toString());      // dXNlcm5hbWU6cGFzc3dvcmQ=
+      String decoded = stringToBase64.decode(encoded);          // username:password
+      // Decrypt the encrypted text
+      // final decrypted = encrypter.decrypt(encrypted, iv: iv);
+      // print('Decrypted: $decrypted');
+      // //is there si a meessgae then only send the messgae
+      await _chatServices.SendMessage(widget.receiveruserUserId, encoded);
+     // clea the message after sendng
+     _messageContoller.clear();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  Scaffold(
+      appBar: AppBar(title: Text(widget.receiveruserEmail),),
+      body: Column(
+        children: [
+          //messae=ge
+          Expanded(
+            child: _buildMessageList(),
+            ),
+          //User input
+          _buildMessageinput(),
+          const SizedBox(height: 20,)
+
+               
+        ],
+      ),
+    );
+    }
+    //bld message lst
+  Widget _buildMessageList() {
+  return StreamBuilder(
+    stream: _chatServices.getMessages(
+      widget.receiveruserUserId,_firebaseAuth.currentUser!.uid,
+    ),
+    builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return Text('Error${snapshot.error}');
+      }
+      else if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Text('Loading..');
+      }else {
+
+        return ListView(
+          children: snapshot.data!.docs.map((document) =>
+              _buildMessageItem(document)).toList(),
+        );
+      }
+    },
+  );
+}
+
+
+    //build message item
+    Widget _buildMessageItem(DocumentSnapshot document){
+      Map<String,dynamic> data = document.data() as Map<String,dynamic>;
+      var alignment =(data['senderId']== _firebaseAuth.currentUser!.uid)
+      ?Alignment.centerRight:Alignment.centerLeft;
+      return Container(
+        alignment: alignment,
+
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment:(data['senderId']== _firebaseAuth.currentUser!.uid)? CrossAxisAlignment.end: CrossAxisAlignment.start ,
+           mainAxisAlignment:(data['senderId']== _firebaseAuth.currentUser!.uid)? MainAxisAlignment.end: MainAxisAlignment.start ,
+            children: [
+            Text(data['senderEmail']),
+            const SizedBox(height: 5,),
+            ChatBubble(message : data['message']),
+          ],),
+        )
+      );
+
+    }
+    //bld message  input
+    Widget _buildMessageinput(){
+       return Padding(
+         padding: const EdgeInsets.all(8.0),
+         child: Row(
+          children: [
+            Expanded(
+              child: MyTextField(
+                controller: _messageContoller, 
+                hintText: 'Enter message', 
+                obscureText: false)
+                ),
+         
+                IconButton(onPressed: sendMessage, icon: const Icon(Icons.arrow_upward, size: 40.0 ,),),
+            ],),
+       );
+    }
+    
+    
+    }
