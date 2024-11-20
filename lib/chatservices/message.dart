@@ -1,33 +1,30 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Message{
+class Message {
   final String senderId;
   final String senderEmail;
   final String receiverId;
-
-  final String message;
+  final String encryptedMessage;
+  final String iv;
   final Timestamp timestamp;
-  
+
   Message({
-    required  this.senderId,
-    required  this.senderEmail,
-    required  this.receiverId,
-    required  this.message,
-    required  this.timestamp,
-
+    required this.senderId,
+    required this.senderEmail,
+    required this.receiverId,
+    required this.encryptedMessage,
+    required this.iv,
+    required this.timestamp,
   });
-  Map<String, dynamic> toMap(){
-    return {
-       'senderId': senderId ,
-    'senderEmail' : senderEmail,
-    'receiver': receiverId,
-    'message': message,
-    'timestamp': timestamp ,
 
+  Map<String, dynamic> toMap() {
+    return {
+      'senderId': senderId,
+      'senderEmail': senderEmail,
+      'receiverId': receiverId,
+      'encryptedMessage': encryptedMessage,
+      'iv': iv,
+      'timestamp': timestamp,
     };
-     
-  
-    
   }
 }

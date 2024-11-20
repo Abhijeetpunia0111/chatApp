@@ -3,10 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '/components/my_button.dart';
 import '/components/my_textfield.dart';
-import '/components/square_tile.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
   
 
   @override
@@ -138,6 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                           .isEmpty) {
                         return 'Email is required';
                       }
+                      return null;
                     }
                   ),
 
@@ -250,7 +250,7 @@ class _LoginPageState extends State<LoginPage> {
                           // Navigate to the login page when tapped
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => SignupPage()),
+                            MaterialPageRoute(builder: (context) => const SignupPage()),
                           );
                         },
                         child: const Text(

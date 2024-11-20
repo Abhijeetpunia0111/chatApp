@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class GetUsername extends StatelessWidget {
  
   final String documentId;
-GetUsername({required this.documentId});
+const GetUsername({super.key, required this.documentId});
   @override
   Widget build(BuildContext context) {
     CollectionReference users= FirebaseFirestore.instance.collection('users') ;
@@ -18,7 +18,7 @@ GetUsername({required this.documentId});
         snapshot.data!.data() as Map<String, dynamic>;
         return Text('name: ${data['name']}');
       }
-      return Text('loading....');
+      return const Text('loading....');
     }), 
     );
   }

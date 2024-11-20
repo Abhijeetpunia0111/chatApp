@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 class SendButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const SendButton({
+  const SendButton({super.key, 
     required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.send),
+      icon: const Icon(Icons.send),
       onPressed: onPressed,
     );
   }

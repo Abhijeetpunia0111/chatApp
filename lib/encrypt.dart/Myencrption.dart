@@ -1,32 +1,25 @@
+import 'dart:convert';
 import 'package:encrypt/encrypt.dart' as encrypt;
 
 class MyEncryptionDecryption {
-  // AES encryption key and IV
   static final key = encrypt.Key.fromLength(32);
-  static final iv = encrypt.IV.fromLength(16);
-  static final encrypter = encrypt.Encrypter(encrypt.AES(key));
 
-  static encryptAES(String text) {
-    final encrypted = encrypter.encrypt(text, iv: iv);
+  static String encryptAES(String text, String iv) {
+    final ivData = encrypt.IV.fromBase64(iv);
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    final encrypted = encrypter.encrypt(text, iv: ivData);
     return encrypted.base64;
   }
 
-  static decryptAES(String base64Encoded) {
-    final encrypted = encrypt.Encrypted.fromBase64(base64Encoded);
-    return encrypter.decrypt(encrypted, iv: iv);
+  static String decryptAES(String base64Encoded, String iv) {
+    final ivData = encrypt.IV.fromBase64(iv);
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    final decrypted = encrypter.decrypt64(base64Encoded, iv: ivData);
+    return decrypted;
   }
-}
 
-
-void main() {
-  // Example usage
-  String text = 'Hello, world!';
-  
-  // Encrypt
-  final encryptedText = MyEncryptionDecryption.encryptAES(text);
-  print('Encrypted: $encryptedText');
-  
-  // Decrypt
-  final decryptedText = MyEncryptionDecryption.decryptAES(encryptedText);
-  print('Decrypted: $decryptedText');
+  static String generateRandomIV() {
+    final random = encrypt.Encrypted.fromBase64(base64Encode(encrypt.IV.fromLength(16).bytes));
+    return random.base64;
+  }
 }

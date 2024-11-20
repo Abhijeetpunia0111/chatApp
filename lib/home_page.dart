@@ -5,7 +5,7 @@ import 'package:chat_login/chats.dart';
 import 'package:chat_login/components/my_textfield.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -31,13 +31,13 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: Text(
                 "${user.email}",
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                style: const TextStyle(fontSize: 16, color: Colors.white),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             IconButton(
               onPressed: signUserOut,
-              icon: Icon(Icons.logout, color: Colors.white),
+              icon: const Icon(Icons.logout, color: Colors.white),
             )
           ],
         ),
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Container(
             color: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
                 Expanded(
@@ -64,10 +64,10 @@ class _HomePageState extends State<HomePage> {
               stream: FirebaseFirestore.instance.collection('users').snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return Center(child: Text('Error'));
+                  return const Center(child: Text('Error'));
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 return ListView(
                   children: snapshot.data!.docs.map<Widget>((doc) => _buildUserListItem(doc)).toList(),
@@ -101,6 +101,6 @@ class _HomePageState extends State<HomePage> {
         },
       );
     }
-    return SizedBox(); // Return empty widget if it's the current user
+    return const SizedBox(); // Return empty widget if it's the current user
   }
 }

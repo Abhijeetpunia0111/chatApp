@@ -6,7 +6,7 @@ import '/components/my_button.dart';
 import '/components/my_textfield.dart';
 
 class SignupPage extends StatefulWidget {
-  SignupPage({Key? key});
+  const SignupPage({super.key, Key? Key});
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -42,7 +42,7 @@ class _SignupPageState extends State<SignupPage> {
           // Navigate to login page
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => LoginPage()),
+            MaterialPageRoute(builder: (context) => const LoginPage()),
           );
         }
       } catch (error) {
@@ -112,6 +112,7 @@ class _SignupPageState extends State<SignupPage> {
                 if (value.toString().isEmpty) {
                 return 'Email is required';
                 }
+                return null;
                 //return "";
                     },
                   ),
@@ -175,13 +176,13 @@ class _SignupPageState extends State<SignupPage> {
                         'Already a member?',
                         style: TextStyle(color: Colors.grey[700]),
                       ),
-                       SizedBox(width: 4),
+                       const SizedBox(width: 4),
                       GestureDetector(
                         onTap: () {
                           // Navigate to the login page when tapped
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => LoginPage()),
+                            MaterialPageRoute(builder: (context) => const LoginPage()),
                           );
                         },
                         child: const Text(

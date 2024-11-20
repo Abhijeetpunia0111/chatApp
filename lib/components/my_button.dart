@@ -4,7 +4,7 @@ class MyButton extends StatelessWidget {
   final Function()? onTap;
   final String text;
 
-  const MyButton({Key? key, required this.onTap, required this.text}) : super(key: key);
+  const MyButton({super.key, required this.onTap, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class MyButton extends StatelessWidget {
         child: Center(
           child: Text(
             text,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 16,
